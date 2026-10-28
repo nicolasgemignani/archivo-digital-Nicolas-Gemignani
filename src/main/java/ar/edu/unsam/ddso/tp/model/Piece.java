@@ -5,8 +5,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,4 +37,7 @@ public class Piece {
 
     @Column(name = "piece_date")
     private LocalDate date;
+
+        @OneToMany(mappedBy = "piece", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Digitization> digitizations = new ArrayList<>();
 }
