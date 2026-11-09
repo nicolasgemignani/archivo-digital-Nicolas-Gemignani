@@ -20,13 +20,11 @@ public class PieceService {
     private final PieceRepository pieceRepository;
     private final DigitizationRepository digitizationRepository;
 
-    // Constructor injection (como exige el AGENTS.md)
     public PieceService(PieceRepository pieceRepository, DigitizationRepository digitizationRepository) {
         this.pieceRepository = pieceRepository;
         this.digitizationRepository = digitizationRepository;
     }
 
-    // ---------- Consultas ----------
 
     public List<PieceResponseDTO> getAllPieces() {
         return pieceRepository.findAll().stream()
@@ -40,7 +38,6 @@ public class PieceService {
         return mapToResponseDTO(piece);
     }
 
-    // ---------- Operaciones ----------
 
     @Transactional
     public PieceResponseDTO createPiece(PieceRequestDTO requestDTO) {
@@ -72,7 +69,6 @@ public class PieceService {
         );
     }
 
-    // ---------- Privados ----------
 
     private Long idFromLong(Long id) {
         return id;
