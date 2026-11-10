@@ -6,6 +6,7 @@ import ar.edu.unsam.ddso.tp.dto.PieceRequestDTO;
 import ar.edu.unsam.ddso.tp.dto.PieceResponseDTO;
 import ar.edu.unsam.ddso.tp.service.PieceService;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,13 +37,21 @@ public class PieceController {
         if (page < 0 || size < 1 || size > 100) {
             return ResponseEntity.badRequest().build();
         }
+
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(pieceService.getAllPieces(pageable));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PieceResponseDTO> getPieceById(@PathVariable Long id) {
+    public ResponseEntity<PieceResponseDTO> getPieceById(
+            @PathVariable Long id) {
         return ResponseEntity.ok(pieceService.getPieceById(id));
+    }
+
+    @GetMapping("/{id}/digitizations")
+    public ResponseEntity<List<DigitizationResponseDTO>> getDigitizationsByPieceId(
+            @PathVariable Long id) {
+        return ResponseEntity.ok(pieceService.getDigitizationsByPieceId(id));
     }
 
     @PostMapping
@@ -56,7 +65,8 @@ public class PieceController {
     public ResponseEntity<DigitizationResponseDTO> addDigitization(
             @PathVariable Long id,
             @Valid @RequestBody DigitizationRequestDTO requestDTO) {
-        DigitizationResponseDTO created = pieceService.addDigitizationToPiece(id, requestDTO);
+        DigitizationResponseDTO created =
+                pieceService.addDigitizationToPiece(id, requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 }
