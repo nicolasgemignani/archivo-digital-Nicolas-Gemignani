@@ -38,6 +38,17 @@ public class PieceService {
         return mapToResponseDTO(piece);
     }
 
+    @Transactional(readOnly = true)
+    public List<DigitizationResponseDTO> getDigitizationsByPieceId(Long pieceId) {
+        Piece piece = pieceRepository.findById(pieceId)
+                .orElseThrow(() -> new RuntimeException("Piece not found with id: " + pieceId));
+
+        return piece.getDigitizations().stream()
+                .map(d -> new DigitizationResponseDTO(
+                        d.getId(), d.getUrl(), d.getDescription()))
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public PieceResponseDTO createPiece(PieceRequestDTO requestDTO) {
         Piece piece = new Piece();
