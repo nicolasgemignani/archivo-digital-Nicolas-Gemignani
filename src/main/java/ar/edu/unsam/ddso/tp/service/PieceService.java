@@ -4,6 +4,7 @@ import ar.edu.unsam.ddso.tp.dto.DigitizationRequestDTO;
 import ar.edu.unsam.ddso.tp.dto.DigitizationResponseDTO;
 import ar.edu.unsam.ddso.tp.dto.PieceRequestDTO;
 import ar.edu.unsam.ddso.tp.dto.PieceResponseDTO;
+import ar.edu.unsam.ddso.tp.exception.ResourceNotFoundException;
 import ar.edu.unsam.ddso.tp.model.Digitization;
 import ar.edu.unsam.ddso.tp.model.Piece;
 import ar.edu.unsam.ddso.tp.repository.DigitizationRepository;
@@ -34,14 +35,14 @@ public class PieceService {
 
     public PieceResponseDTO getPieceById(Long id) {
         Piece piece = pieceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Piece not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Piece not found with id: " + id));
         return mapToResponseDTO(piece);
     }
 
     @Transactional(readOnly = true)
     public List<DigitizationResponseDTO> getDigitizationsByPieceId(Long pieceId) {
         Piece piece = pieceRepository.findById(pieceId)
-                .orElseThrow(() -> new RuntimeException("Piece not found with id: " + pieceId));
+                .orElseThrow(() -> new ResourceNotFoundException("Piece not found with id: " + pieceId));
 
         return piece.getDigitizations().stream()
                 .map(d -> new DigitizationResponseDTO(
@@ -64,7 +65,7 @@ public class PieceService {
     public DigitizationResponseDTO addDigitizationToPiece(
             Long pieceId, DigitizationRequestDTO requestDTO) {
         Piece piece = pieceRepository.findById(pieceId)
-                .orElseThrow(() -> new RuntimeException("Piece not found with id: " + pieceId));
+                .orElseThrow(() -> new ResourceNotFoundException("Piece not found with id: " + pieceId));
 
         Digitization digitization = new Digitization();
         digitization.setUrl(requestDTO.url());
