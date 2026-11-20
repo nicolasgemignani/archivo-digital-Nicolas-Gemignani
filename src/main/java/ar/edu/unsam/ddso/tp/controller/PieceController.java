@@ -2,6 +2,7 @@ package ar.edu.unsam.ddso.tp.controller;
 
 import ar.edu.unsam.ddso.tp.dto.DigitizationRequestDTO;
 import ar.edu.unsam.ddso.tp.dto.DigitizationResponseDTO;
+import ar.edu.unsam.ddso.tp.dto.PageResponseDTO;
 import ar.edu.unsam.ddso.tp.dto.PieceRequestDTO;
 import ar.edu.unsam.ddso.tp.dto.PieceResponseDTO;
 import ar.edu.unsam.ddso.tp.service.PieceService;
@@ -31,7 +32,7 @@ public class PieceController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<PieceResponseDTO>> getAllPieces(
+    public ResponseEntity<PageResponseDTO<PieceResponseDTO>> getAllPieces(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         if (page < 0 || size < 1 || size > 100) {
@@ -39,7 +40,13 @@ public class PieceController {
         }
 
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(pieceService.getAllPieces(pageable));
+        Page<PieceResponseDTO> pieces = pieceService.getAllPieces(pageable);
+        return ResponseEntity.ok(new PageResponseDTO<>(
+                pieces.getContent(),
+                pieces.getNumber(),
+                pieces.getSize(),
+                pieces.getTotalElements(),
+                pieces.getTotalPages()));
     }
 
     @GetMapping("/{id}")
