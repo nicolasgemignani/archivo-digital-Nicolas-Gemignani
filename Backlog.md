@@ -19,33 +19,33 @@ Entrega: 16/11/2026 (meta interna: código terminado el 09/11)
 
 ## Fase 0 - Base compartida (P1, hasta 01/11). BLOQUEA A LOS DEMÁS
 
-- [ ] E-01: entidades model Tag, Piece, Digitization con relaciones
+- [x] E-01: entidades model Tag, Piece, Digitization con relaciones
   - Archivos: model/Tag.java, model/Piece.java, model/Digitization.java
-- [ ] E-02: exception/GlobalExceptionHandler.java y excepción NotFound base
-- [ ] Mergear a main y avisar al grupo
+- [x] E-02: exception/GlobalExceptionHandler.java y excepción NotFound base
+- [x] Mergear a main y avisar al grupo
 - [ ] Todos: verificar que compila (JDK 21 + toolchains.xml)
 
 ## Fase 1 - Cada uno lo suyo (02/11 - 08/11), en paralelo
 
 ### P1: Tags y catalogación
 
-- [ ] repository/TagRepository, dto/Tag*DTO, service/TagService, controller/TagController
-- [ ] US-01 a 04 (CRUD de tags, con regla de tag en uso)
-- [ ] US-10, 11 (asignar/quitar tag): va en la última parte, requiere que P2 haya mergeado Digitization
-- [ ] Test unitario de TagService
+- [x] repository/TagRepository, dto/Tag*DTO, service/TagService, controller/TagController
+- [x] US-01 a 04 (CRUD de tags, con regla de tag en uso)
+- [x] US-10, 11 (asignar/quitar tag): va en la última parte, requiere que P2 haya mergeado Digitization
+- [x] Test unitario de TagService
 
 ### P2: Piezas y digitalizaciones
 
-- [ ] repository/PieceRepository, DigitizationRepository, DTOs, services, controllers
-- [ ] US-05 a 09 (con paginación)
-- [ ] Test unitario de PieceService
+- [x] repository/PieceRepository, DigitizationRepository, DTOs, services, controllers
+- [x] US-05 a 09 (con paginación)
+- [x] Test unitario de PieceService
 
 ### P3: Búsqueda
 
-- [ ] repository: consulta de piezas por filtros (nombre, descripción, fechas, tags)
-- [ ] service/PieceSearchService, controller/PieceSearchController, DTOs
-- [ ] US-12 (nombre) primero, luego US-13 y US-14
-- [ ] Test unitario de PieceSearchService
+- [x] repository: consulta de piezas por filtros (nombre, descripción, fechas, tags)
+- [x] service/PieceSearchService, controller/PieceSearchController, DTOs
+- [x] US-12 (nombre) primero, luego US-13 y US-14
+- [x] Test unitario de PieceSearchService
 
 ## Fase 2 - Integración (09/11 - 10/11)
 
@@ -54,16 +54,16 @@ Entrega: 16/11/2026 (meta interna: código terminado el 09/11)
 
 ## Fase 3 - Bot (10/11 - 12/11) - P3
 
-- [ ] Bot de Telegram: US-15 (buscar) y US-16 (detalle)
+- [x] Bot de Telegram: US-15 (buscar) y US-16 (detalle)
 
 ## Fase 4 - Documentación (hasta 14/11)
 
-- [ ] README: grupo, integrantes, cómo levantar (P1)
-- [ ] docs/api.md (P2)
-- [ ] docs/test.md (P3)
-- [ ] ARCHITECTURE.md + diagrama de clases de dominio (P1)
-- [ ] Diagrama de base de datos (P2)
-- [ ] Diagramas de secuencia con capas marcadas (P3)
+- [x] README: grupo, integrantes, cómo levantar (P1)
+- [x] docs/api.md (P2)
+- [x] docs/test.md (P3)
+- [x] ARCHITECTURE.md + diagrama de clases de dominio (P1)
+- [x] Diagrama de base de datos (P2)
+- [x] Diagramas de secuencia con capas marcadas (P3)
 - [ ] Cada uno repasa SU parte y entiende el resto
 
 ## Extras (solo si sobra tiempo)

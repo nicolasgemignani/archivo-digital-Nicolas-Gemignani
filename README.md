@@ -119,19 +119,59 @@ El proyecto incluye Checkstyle, PMD y SpotBugs:
 | [`Backlog.md`](Backlog.md)           | Backlog y reparto de tareas                     |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Dominio, vistas C4 y diagrama de clases         |
 | [`AGENTS.md`](AGENTS.md)             | Convenciones de código                         |
-| [`GUIA_EQUIPO.md`](GUIA_EQUIPO.md)   | Forma de trabajo del equipo                     |
-| `docs/api.md`                       | Especificación de la API *(pendiente)*       |
-| `docs/test.md`                      | Secuencia de prueba del sistema *(pendiente)* |
+| [`docs/api.md`](docs/api.md)         | Especificación de la API web                    |
+| [`docs/test.md`](docs/test.md)       | Secuencia de prueba de todo el sistema          |
+| [`docs/diagrama-clases.md`](docs/diagrama-clases.md) | Diagrama de clases de dominio   |
+| [`docs/arquitectura.md`](docs/arquitectura.md) | Contenedores y capas                  |
+| [`docs/base-de-datos.md`](docs/base-de-datos.md) | Diagrama de base de datos           |
+| [`docs/diagramas-secuencia.md`](docs/diagramas-secuencia.md) | Diagramas de secuencia con capas |
 
 ## Bot de Telegram
 
-*(Pendiente: se completa cuando esté implementado el bot.)*
+El bot permite buscar piezas y ver sus digitalizaciones desde Telegram (US-15 y US-16). Corre dentro
+de la misma aplicación y consulta a Telegram por *long polling*, así que no hace falta una URL pública.
+
+**Es opcional**: si no se configura un token, la aplicación arranca igual y funciona solo como API REST.
+
+### Cómo activarlo
+
+1. En Telegram, hablarle a [@BotFather](https://t.me/BotFather), mandar `/newbot` y seguir los pasos.
+   Al final entrega un token con la forma `123456789:ABC...`. **No subir el token al repositorio.**
+2. Definir la variable de entorno `TELEGRAM_BOT_TOKEN` y levantar la app en la misma terminal:
+
+   ```bash
+   # Linux / Mac / Git Bash
+   export TELEGRAM_BOT_TOKEN=123456789:ABC...
+   ./mvnw spring-boot:run
+   ```
+
+   ```powershell
+   # Windows PowerShell
+   $env:TELEGRAM_BOT_TOKEN="123456789:ABC..."
+   .\mvnw.cmd spring-boot:run
+   ```
+
+3. Buscar el bot en Telegram por el nombre de usuario que se eligió y escribirle `/start`.
+
+### Comandos
+
+| Mensaje           | Qué hace                                                          |
+| ----------------- | ----------------------------------------------------------------- |
+| `/buscar <texto>` | Busca piezas por nombre (muestra hasta 5)                         |
+| *texto suelto*    | Lo mismo que `/buscar`                                            |
+| `/tag <nombre>`   | Piezas que tienen ese tag en alguna digitalización                |
+| `/pieza <id>`     | Detalle: nombre, fecha, descripción y links de las digitalizaciones. Los resultados de búsqueda traen el link `/pieza_<id>` para tocarlo directo |
+| `/start`, `/help` | Ayuda                                                             |
+
+Si el bot no responde, revisar los logs: un token inválido aparece como error `401` y un webhook
+configurado en el bot aparece como error `409`.
 
 ## Estructura del proyecto
 
 ```
 src/main/java/ar/edu/unsam/ddso/tp/
 ├── TpApplication.java      # entry point
+├── bot/                    # bot de Telegram (polling, handler y cliente HTTP)
 ├── controller/             # endpoints REST
 ├── dto/                    # records de request/response
 ├── model/                  # entidades y reglas de negocio
@@ -144,5 +184,6 @@ src/main/resources/
 ├── application-local.properties  # H2 + JPA para desarrollo local
 └── application-prod.properties   # H2 + JPA para "prod"
 src/test/java/ar/edu/unsam/ddso/tp/
-└── ...                           # tests unitarios y smoke test
+└── ...                           # tests unitarios, de integración de la búsqueda y smoke test
+docs/                             # API, prueba del sistema y diagramas
 ```
