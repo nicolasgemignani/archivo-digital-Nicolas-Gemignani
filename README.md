@@ -11,7 +11,6 @@ El sistema permite dar de alta piezas físicas, asociarles digitalizaciones (una
 | - | ------------------ | ------------------------------------------------------ |
 | 1 | Nicolás Gemignani | [nicolasgemignani](https://github.com/nicolasgemignani) |
 | 2 | Rodrigo Ojeda      | [RodryOjeda27](https://github.com/RodryOjeda27)         |
-| 3 | Valentin Andiñach | [Valandy](https://github.com/Valandy)                   |
 
 ## Tecnologías
 
