@@ -13,8 +13,8 @@ Entrega: 16/11/2026 (meta interna: código terminado el 09/11)
 ## Reparto
 
 - P1 (Nicolás): E-01, E-02, Tags (US-01..04), Catalogación (US-10, 11)
-- P2: Piece y Digitization (US-05..09)
-- P3: Búsqueda (US-12..14) y Bot (US-15, 16)
+- P2 (Rodrigo): Piece y Digitization (US-05..09)
+- P3: se dio de baja. Búsqueda (US-12..14) y Bot (US-15, 16) los toma P2
 - Docs: ver Fase 4
 
 ## Fase 0 - Base compartida (P1, hasta 01/11). BLOQUEA A LOS DEMÁS
