@@ -10,7 +10,6 @@ import ar.edu.unsam.ddso.tp.model.Piece;
 import ar.edu.unsam.ddso.tp.repository.DigitizationRepository;
 import ar.edu.unsam.ddso.tp.repository.PieceRepository;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,15 +27,17 @@ public class PieceService {
         this.digitizationRepository = digitizationRepository;
     }
 
+    @Transactional(readOnly = true)
     public Page<PieceResponseDTO> getAllPieces(Pageable pageable) {
         return pieceRepository.findAll(pageable)
-                .map(this::mapToResponseDTO);
+                .map(PieceMapper::toPieceDto);
     }
 
+    @Transactional(readOnly = true)
     public PieceResponseDTO getPieceById(Long id) {
         Piece piece = pieceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Piece not found with id: " + id));
-        return mapToResponseDTO(piece);
+        return PieceMapper.toPieceDto(piece);
     }
 
     @Transactional(readOnly = true)
@@ -45,9 +46,8 @@ public class PieceService {
                 .orElseThrow(() -> new ResourceNotFoundException("Piece not found with id: " + pieceId));
 
         return piece.getDigitizations().stream()
-                .map(d -> new DigitizationResponseDTO(
-                        d.getId(), d.getUrl(), d.getDescription()))
-                .collect(Collectors.toList());
+                .map(PieceMapper::toDigitizationDto)
+                .toList();
     }
 
     @Transactional
@@ -58,7 +58,7 @@ public class PieceService {
         piece.setDate(requestDTO.date());
 
         Piece savedPiece = pieceRepository.save(piece);
-        return mapToResponseDTO(savedPiece);
+        return PieceMapper.toPieceDto(savedPiece);
     }
 
     @Transactional
@@ -74,25 +74,6 @@ public class PieceService {
 
         Digitization savedDigitization = digitizationRepository.save(digitization);
 
-        return new DigitizationResponseDTO(
-                savedDigitization.getId(),
-                savedDigitization.getUrl(),
-                savedDigitization.getDescription()
-        );
-    }
-
-    private PieceResponseDTO mapToResponseDTO(Piece piece) {
-        List<DigitizationResponseDTO> digiDTOs = piece.getDigitizations().stream()
-                .map(d -> new DigitizationResponseDTO(
-                        d.getId(), d.getUrl(), d.getDescription()))
-                .collect(Collectors.toList());
-
-        return new PieceResponseDTO(
-                piece.getId(),
-                piece.getName(),
-                piece.getDescription(),
-                piece.getDate(),
-                digiDTOs
-        );
+        return PieceMapper.toDigitizationDto(savedDigitization);
     }
 }

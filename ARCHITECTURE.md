@@ -123,8 +123,10 @@ El monolito sigue las capas de Fowler. Cada capa solo habla con la de abajo.
 
 ```mermaid
 flowchart TD
-    client["Cliente (Postman / bot de Telegram)"]
+    client["Cliente HTTP (Postman)"]
+    telegram["Telegram"]
     controller["controller<br/>@RestController<br/>Mapea HTTP a llamadas al service"]
+    bot["bot<br/>TelegramBotPoller + TelegramBotHandler<br/>Mapea mensajes a llamadas al service"]
     service["service<br/>@Service<br/>Orquesta, aplica reglas, mapea a DTO"]
     repository["repository<br/>JpaRepository<br/>Acceso a datos"]
     model["model<br/>@Entity<br/>Piece, Digitization, Tag"]
@@ -133,7 +135,9 @@ flowchart TD
     exceptions["exception + model/exceptions<br/>GlobalExceptionHandler"]
 
     client -->|HTTP| controller
+    telegram -->|long polling| bot
     controller --> service
+    bot --> service
     service --> repository
     repository --> db
     service -.usa.-> model
@@ -146,6 +150,7 @@ flowchart TD
 | Paquete              | Responsabilidad                                                               | No debe                                            |
 | -------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------- |
 | `controller`       | Mapear HTTP a llamadas al service y validar la entrada (`@Valid`).          | Tener lógica de negocio ni acceder al repository. |
+| `bot`              | Mapear mensajes de Telegram a llamadas al service y formatear la respuesta. `TelegramClient` es el gateway HTTP a Telegram. | Tener lógica de negocio ni acceder al repository. |
 | `dto`              | Transportar datos de requests y responses (`record`).                       | Tener lógica. Nunca se devuelve una entidad JPA.  |
 | `model`            | Entidades y reglas propias del dominio.                                       | Conocer HTTP.                                      |
 | `model/exceptions` | Violaciones de reglas de negocio (`BusinessRuleException`).                 |                                                    |
@@ -161,6 +166,8 @@ traduce a una respuesta con el código HTTP correspondiente.
 | Excepción                                                | Origen               | HTTP |
 | --------------------------------------------------------- | -------------------- | ---- |
 | `ResourceNotFoundException`                             | `exception`        | 404  |
+| `BadRequestException` (paginación o rango de fechas inválido) | `exception`  | 400  |
+| `MethodArgumentTypeMismatchException` (parámetro mal formado) | Spring       | 400  |
 | `BusinessRuleException`                                 | `model/exceptions` | 409  |
 | `MethodArgumentNotValidException` (validación del DTO) | Spring               | 400  |
 
@@ -226,26 +233,22 @@ flowchart LR
     tag["Tag"] --> digitization["Digitization"] --> piece["Piece (resultado)"]
 ```
 
-## 8. Preguntas abiertas / próximos pasos
+## 8. Decisiones tomadas
 
-**Preguntas abiertas**
+- `Piece.date` es la fecha del objeto físico, cargada a mano por el archivista (pendiente de
+  confirmar con los docentes).
+- **Búsqueda**: un único endpoint `GET /pieces/search` con filtros opcionales (nombre, descripción,
+  rango de fechas y tags) que se combinan con Y. Se arma con una `Specification` de Spring Data JPA
+  (`PieceSpecifications`), porque una consulta fija con todos los filtros opcionales sería difícil de
+  leer. Los resultados se paginan y se ordenan por nombre.
+- **Bot de Telegram**: corre dentro del monolito y usa *long polling* (`getUpdates`), no webhook, así
+  no necesita una URL pública. Se activa solo si está definido `TELEGRAM_BOT_TOKEN`.
 
-- Confirmar con los docentes que `Piece.date` es la fecha del objeto físico cargada a mano.
-- Definir cómo se integra el bot de Telegram (consulta periódica o webhook) y si convive en el
-  mismo proceso del monolito. El diagrama de contenedores asume que sí.
-- Definir si las búsquedas aceptan filtros combinados (nombre, descripción, fechas y tags a la vez).
-
-**Próximos pasos**
-
-- [ ] Mergear las partes de Tags, Piezas/Digitalizaciones y Búsqueda.
-- [ ] Documentar la API en `docs/api.md`.
-- [ ] Armar los diagramas de base de datos y de secuencia en `docs/`.
-- [ ] Implementar el bot de Telegram.
-- [ ] Actualizar este documento si el diseño cambia durante la implementación.
+Los diagramas de base de datos y de secuencia están en [`docs/`](docs/).
 
 ## 9. Referencias
 
 - Convenciones de código: [`AGENTS.md`](AGENTS.md).
 - Historias de usuario: [`US.md`](US.md).
 - Backlog y reparto: [`Backlog.md`](Backlog.md).
-- Forma de trabajo del equipo: [`GUIA_EQUIPO.md`](GUIA_EQUIPO.md).
+- API y prueba del sistema: [`docs/api.md`](docs/api.md), [`docs/test.md`](docs/test.md).
